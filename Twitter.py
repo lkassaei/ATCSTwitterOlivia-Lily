@@ -145,6 +145,3 @@ if __name__ == "__main__":
     if post is not None:
         t.save()
     t.display_feed()
-
-        
-            

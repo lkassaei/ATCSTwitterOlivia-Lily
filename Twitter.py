@@ -35,7 +35,14 @@ class Twitter:
         return True
 
     def login(self, name, password):
-        pass
+    # Check if the user has a name, password exists
+        with open(self.login_JSON, "r") as f:
+            data = json.load(f)
+        # Check if username/password entry exists in file and if so, does the username/password match password inputted
+        if name in data and data[name] == password:
+            return True
+        # In any other case, if the password does not exist or wrong password
+        return False 
 
 if __name__ == "__main__":
     t = Twitter("logins.json", "posts.json", None, None, None)
@@ -77,8 +84,4 @@ if __name__ == "__main__":
                 break
 
             print("Username already exists!\n")
-                
-
-                    
-
-
+            

@@ -34,6 +34,7 @@ class Twitter:
         self.current_user = name
         return True
 
+    # Verifies if the user-inputted username and password is correct
     def login(self, name, password):
     # Check if the user has a name, password exists
         with open(self.login_JSON, "r") as f:

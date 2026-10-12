@@ -77,12 +77,29 @@ class Twitter:
         print("Post created successfully!")
         return new_post
 
-    def save(self):
-        # Load in posts.json
-        # Append new post
-        # Write the whole list back
-        pass
+    # Saves the post into the post_JSON file 
+    def save_post(self, post):
+        # Load the existing posts from the post_JSON file
+        with open(self.post_JSON, "r") as f:
+            data = json.load(f)
 
+        # Find out who the author of this post we want to save
+        user = post.user
+
+        # Check if the user already has a prexisting entry in the dictionary
+        # If not create a empty list within the dictionary for the user to store its post
+        if user not in data:
+            data[user] = []
+
+        # Flatten the Post to a dict and add it
+        data[user].append(post.to_dict())
+
+        # Write the whole dict back into the file
+        with open(self.post_JSON, "w") as f:
+            json.dump(data, f)
+
+        return True
+    
     # Print all posts that are not by the current user
     def display_feed(self):
         # Go through posts.json

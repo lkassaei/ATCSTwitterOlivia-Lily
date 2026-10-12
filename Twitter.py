@@ -1,6 +1,8 @@
 import json
 import os
 
+from Post import Post
+
 class Twitter:
     def __init__(self, login_JSON, post_JSON, logins, user_posts, current_user):
         self.loginJSON = login_JSON
@@ -37,13 +39,45 @@ class Twitter:
     # Verifies if the user-inputted username and password is correct
     def login(self, name, password):
     # Check if the user has a name, password exists
-        with open(self.login_JSON, "r") as f:
+        with open(self.loginJSON, "r") as f:
             data = json.load(f)
         # Check if username/password entry exists in file and if so, does the username/password match password inputted
         if name in data and data[name] == password:
+            self.current_user = name
             return True
         # In any other case, if the password does not exist or wrong password
         return False 
+
+    def create_post(self):
+        # If they want to make post then don't quit
+        answer = input("Do you want to create a post? (y/n): ").strip().lower()
+
+        if answer == "n":
+            return None
+
+        # Handle weird input
+        if answer != "y":
+            print("Respond with (y/n).")
+            return None
+
+        # Get input for the post and create
+        title = input("Post title: ")
+        caption = input("Post caption: ")
+        message = input("Post message: ")
+
+        new_post = Post(self.current_user, title, caption, message)
+
+        # Handles the fact that when we first create the Twitter object user posts is set to None
+        if self.user_posts is None:
+            self.user_posts = []
+
+        self.user_posts.append(new_post)
+
+        print("Post created successfully!")
+        return new_post
+
+    def save(self):
+        pass
 
 if __name__ == "__main__":
     t = Twitter("logins.json", "posts.json", None, None, None)
@@ -85,4 +119,8 @@ if __name__ == "__main__":
                 break
 
             print("Username already exists!\n")
+
+    t.create_post()
+
+        
             

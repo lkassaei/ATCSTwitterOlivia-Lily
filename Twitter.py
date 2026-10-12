@@ -93,7 +93,7 @@ class Twitter:
             # If the author isnt the current user
             if post["author"] != self.current_user:
                 # Print it
-                print("Author:", post["author"])
+                print("Username:", post["author"])
                 print("Title:", post["title"])
                 print("Caption:", post["caption"])
                 print("Message:", post["message"])

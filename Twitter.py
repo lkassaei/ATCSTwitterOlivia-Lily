@@ -77,7 +77,28 @@ class Twitter:
         return new_post
 
     def save(self):
+        # Load in posts.json
+        # Append new post
+        # Write the whole list back
         pass
+
+    # Print all posts that are not by the current user
+    def display_feed(self):
+        # Go through posts.json
+        with open(self.post, "r") as f:
+            posts = json.load(f)
+
+        # Go through posts
+        for post in posts:
+            # If the author isnt the current user
+            if post["author"] != self.current_user:
+                # Print it
+                print("Username:", post["author"])
+                print("Title:", post["title"])
+                print("Caption:", post["caption"])
+                print("Message:", post["message"])
+                print()
+
 
 if __name__ == "__main__":
     t = Twitter("logins.json", "posts.json", None, None, None)
@@ -120,7 +141,10 @@ if __name__ == "__main__":
 
             print("Username already exists!\n")
 
-    t.create_post()
+    post = t.create_post()
+    if post is not None:
+        t.save()
+    t.display_feed()
 
         
             

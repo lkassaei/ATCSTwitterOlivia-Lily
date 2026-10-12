@@ -141,8 +141,9 @@ if __name__ == "__main__":
 
             print("Username already exists!\n")
 
-    t.create_post()
-    t.save()
+    post = t.create_post()
+    if post is not None:
+        t.save()
     t.display_feed()
 
         

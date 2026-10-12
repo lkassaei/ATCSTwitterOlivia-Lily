@@ -5,21 +5,22 @@ from Post import Post
 
 class Twitter:
     def __init__(self, login_JSON, post_JSON, logins, user_posts, current_user):
-        self.loginJSON = login_JSON
-        self.post = post_JSON
+        self.login_JSON = login_JSON
+        self.post_JSON = post_JSON
         self.logins = logins
         self.user_posts = user_posts
         self.current_user = current_user
 
         # Create file with an empty dictionary if missing or empty
-        if not os.path.exists(self.loginJSON) or os.path.getsize(self.loginJSON) == 0:
-            with open(self.loginJSON, "w") as f:
-                json.dump({}, f)
+        for path in (self.login_JSON, self.post_JSON):
+            if not os.path.exists(path) or os.path.getsize(path) == 0:
+                with open(path, "w") as f:
+                    json.dump({}, f)
 
     # Scans the logins JSON file to see if the username already has an account
     # If the username isn't registered it creates a new account by adding the username/password to the JSON
     def create_account(self, name, password):
-        with open(self.loginJSON, "r") as f:
+        with open(self.login_JSON, "r") as f:
             logins = json.load(f)
 
         # Check if username already exists
@@ -30,7 +31,7 @@ class Twitter:
         logins[name] = password
 
         # Write the updated dictionary back to the JSON file
-        with open(self.loginJSON, "w") as f:
+        with open(self.login_JSON, "w") as f:
             json.dump(logins, f, indent=4)
 
         self.current_user = name
@@ -145,3 +146,6 @@ if __name__ == "__main__":
     if post is not None:
         t.save()
     t.display_feed()
+
+        
+            

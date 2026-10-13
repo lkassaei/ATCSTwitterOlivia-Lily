@@ -17,6 +17,11 @@ class Twitter:
                 with open(path, "w") as f:
                     json.dump({}, f)
 
+        # Create posts file with an empty dictionary if missing or empty
+        if not os.path.exists(self.post_JSON) or os.path.getsize(self.post_JSON) == 0:
+            with open(self.post_JSON, "w") as f:
+                json.dump({}, f)
+
     # Scans the logins JSON file to see if the username already has an account
     # If the username isn't registered it creates a new account by adding the username/password to the JSON
     def create_account(self, name, password):
@@ -40,7 +45,7 @@ class Twitter:
     # Verifies if the user-inputted username and password is correct
     def login(self, name, password):
     # Check if the user has a name, password exists
-        with open(self.loginJSON, "r") as f:
+        with open(self.login_JSON, "r") as f:
             data = json.load(f)
         # Check if username/password entry exists in file and if so, does the username/password match password inputted
         if name in data and data[name] == password:
@@ -80,11 +85,14 @@ class Twitter:
     # Saves the post into the post_JSON file 
     def save_post(self, post):
         # Load the existing posts from the post_JSON file
-        with open(self.post_JSON, "r") as f:
-            data = json.load(f)
+        try:
+            with open(self.post_JSON, "r") as f:
+                data = json.load(f)
+        except json.JSONDecodeError:
+            data = {}
 
         # Find out who the author of this post we want to save
-        user = post.user
+        user = post.author
 
         # Check if the user already has a prexisting entry in the dictionary
         # If not create a empty list within the dictionary for the user to store its post
@@ -99,24 +107,23 @@ class Twitter:
             json.dump(data, f)
 
         return True
-    
+
     # Print all posts that are not by the current user
     def display_feed(self):
-        # Go through posts.json
-        with open(self.post, "r") as f:
-            posts = json.load(f)
+        # Read posts.json
+        with open(self.post_JSON, "r") as f:
+            data = json.load(f)
 
-        # Go through posts
-        for post in posts:
-            # If the author isnt the current user
-            if post["author"] != self.current_user:
-                # Print it
-                print("Username:", post["author"])
-                print("Title:", post["title"])
-                print("Caption:", post["caption"])
-                print("Message:", post["message"])
-                print()
-
+        # Go through each user's posts
+        for user in data:
+            # Skip the current user's posts
+            if user != self.current_user:
+                for post in data[user]:
+                    print("Username:", post["author"])
+                    print("Title:", post["title"])
+                    print("Caption:", post["caption"])
+                    print("Message:", post["message"])
+                    print()
 
 if __name__ == "__main__":
     t = Twitter("logins.json", "posts.json", None, None, None)
@@ -161,7 +168,7 @@ if __name__ == "__main__":
 
     post = t.create_post()
     if post is not None:
-        t.save()
+        t.save_post(post)
     t.display_feed()
 
         

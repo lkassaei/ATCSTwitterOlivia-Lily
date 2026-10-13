@@ -4,9 +4,9 @@ import os
 from Post import Post
 
 class Twitter:
-    def __init__(self, login_JSON, post_JSON, logins, user_posts, current_user):
-        self.loginJSON = login_JSON
-        self.post = post_JSON
+    def __init__(self, loginJSON, postJSON, logins, user_posts, current_user):
+        self.loginJSON = loginJSON
+        self.post = postJSON
         self.logins = logins
         self.user_posts = user_posts
         self.current_user = current_user
@@ -85,13 +85,13 @@ class Twitter:
     # Print all posts that are not by the current user
     def display_feed(self):
         # Go through posts.json
-        with open(self.post, "r") as f:
-            posts = json.load(f)
+        with open(self.postJSON, "r") as f:
+            data = json.load(f)
 
         # Go through posts
-        for post in posts:
+        for user, posts in data.items():
             # If the author isnt the current user
-            if post["author"] != self.current_user:
+            if user != self.current_user:
                 # Print it
                 print("Username:", post["author"])
                 print("Title:", post["title"])
@@ -143,7 +143,7 @@ if __name__ == "__main__":
 
     post = t.create_post()
     if post is not None:
-        t.save()
+        t.save_post(post)
     t.display_feed()
 
         

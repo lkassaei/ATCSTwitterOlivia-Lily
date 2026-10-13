@@ -110,9 +110,20 @@ class Twitter:
 
     # Print all posts that are not by the current user
     def display_feed(self):
-        # Read posts.json
-        with open(self.post_JSON, "r") as f:
+        # Go through posts.json
+        with open(self.postJSON, "r") as f:
             data = json.load(f)
+
+        # Go through posts
+        for user, posts in data.items():
+            # If the author isnt the current user
+            if user != self.current_user:
+                # Print it
+                print("Username:", post["author"])
+                print("Title:", post["title"])
+                print("Caption:", post["caption"])
+                print("Message:", post["message"])
+                print()
 
         # Go through each user's posts
         for user in data:

@@ -4,22 +4,28 @@ import os
 from Post import Post
 
 class Twitter:
-    def __init__(self, loginJSON, postJSON, logins, user_posts, current_user):
-        self.loginJSON = loginJSON
-        self.post = postJSON
+    def __init__(self, login_JSON, post_JSON, logins, user_posts, current_user):
+        self.login_JSON = login_JSON
+        self.post_JSON = post_JSON
         self.logins = logins
         self.user_posts = user_posts
         self.current_user = current_user
 
         # Create file with an empty dictionary if missing or empty
-        if not os.path.exists(self.loginJSON) or os.path.getsize(self.loginJSON) == 0:
-            with open(self.loginJSON, "w") as f:
+        for path in (self.login_JSON, self.post_JSON):
+            if not os.path.exists(path) or os.path.getsize(path) == 0:
+                with open(path, "w") as f:
+                    json.dump({}, f)
+
+        # Create posts file with an empty dictionary if missing or empty
+        if not os.path.exists(self.post_JSON) or os.path.getsize(self.post_JSON) == 0:
+            with open(self.post_JSON, "w") as f:
                 json.dump({}, f)
 
     # Scans the logins JSON file to see if the username already has an account
     # If the username isn't registered it creates a new account by adding the username/password to the JSON
     def create_account(self, name, password):
-        with open(self.loginJSON, "r") as f:
+        with open(self.login_JSON, "r") as f:
             logins = json.load(f)
 
         # Check if username already exists
@@ -30,7 +36,7 @@ class Twitter:
         logins[name] = password
 
         # Write the updated dictionary back to the JSON file
-        with open(self.loginJSON, "w") as f:
+        with open(self.login_JSON, "w") as f:
             json.dump(logins, f, indent=4)
 
         self.current_user = name
@@ -39,7 +45,7 @@ class Twitter:
     # Verifies if the user-inputted username and password is correct
     def login(self, name, password):
     # Check if the user has a name, password exists
-        with open(self.loginJSON, "r") as f:
+        with open(self.login_JSON, "r") as f:
             data = json.load(f)
         # Check if username/password entry exists in file and if so, does the username/password match password inputted
         if name in data and data[name] == password:
@@ -76,11 +82,31 @@ class Twitter:
         print("Post created successfully!")
         return new_post
 
-    def save(self):
-        # Load in posts.json
-        # Append new post
-        # Write the whole list back
-        pass
+    # Saves the post into the post_JSON file 
+    def save_post(self, post):
+        # Load the existing posts from the post_JSON file
+        try:
+            with open(self.post_JSON, "r") as f:
+                data = json.load(f)
+        except json.JSONDecodeError:
+            data = {}
+
+        # Find out who the author of this post we want to save
+        user = post.author
+
+        # Check if the user already has a prexisting entry in the dictionary
+        # If not create a empty list within the dictionary for the user to store its post
+        if user not in data:
+            data[user] = []
+
+        # Flatten the Post to a dict and add it
+        data[user].append(post.to_dict())
+
+        # Write the whole dict back into the file
+        with open(self.post_JSON, "w") as f:
+            json.dump(data, f)
+
+        return True
 
     # Print all posts that are not by the current user
     def display_feed(self):
@@ -99,6 +125,16 @@ class Twitter:
                 print("Message:", post["message"])
                 print()
 
+        # Go through each user's posts
+        for user in data:
+            # Skip the current user's posts
+            if user != self.current_user:
+                for post in data[user]:
+                    print("Username:", post["author"])
+                    print("Title:", post["title"])
+                    print("Caption:", post["caption"])
+                    print("Message:", post["message"])
+                    print()
 
 if __name__ == "__main__":
     t = Twitter("logins.json", "posts.json", None, None, None)

@@ -54,6 +54,7 @@ class Twitter:
         # In any other case, if the password does not exist or wrong password
         return False 
 
+    # Make post
     def create_post(self):
         # If they want to make post then don't quit
         answer = input("Do you want to create a post? (y/n): ").strip().lower()

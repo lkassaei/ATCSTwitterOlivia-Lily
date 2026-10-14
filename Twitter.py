@@ -54,6 +54,7 @@ class Twitter:
         # In any other case, if the password does not exist or wrong password
         return False 
 
+    # Make post
     def create_post(self):
         # If they want to make post then don't quit
         answer = input("Do you want to create a post? (y/n): ").strip().lower()
@@ -110,7 +111,11 @@ class Twitter:
 
     # Print all posts that are not by the current user
     def display_feed(self):
-        # Read posts.json
+        print()
+        print("Here is your feed:")
+        print()
+
+        # Go through posts.json
         with open(self.post_JSON, "r") as f:
             data = json.load(f)
 
